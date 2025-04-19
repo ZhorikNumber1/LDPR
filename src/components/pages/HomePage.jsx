@@ -13,6 +13,7 @@ const HomePageLayout = styled.div`
     padding: 2rem 1rem;
 `;
 
+
 const NavTabs = styled.nav`
     display: flex;
     border-bottom: 1px solid ${({ theme }) => theme.colors.gray};
