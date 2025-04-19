@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import styled from 'styled-components';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { NavLink } from 'react-router-dom';
 import { Card, CardTitle, CardContent } from '../common/Card';
 import { PrimaryButton } from '../common/Button';
-import {FaFire, FaEdit, FaComments, FaUsers} from 'react-icons/fa';
+import {FaFire, FaEdit, FaComments, FaUsers, FaTimes} from 'react-icons/fa';
 
 // Стили для новой структуры
 const HomePageLayout = styled.div`
@@ -92,6 +92,81 @@ const PetitionContent = styled.div`
     flex-direction: column;
 `;
 
+// Добавляем стили для модального окна
+const ModalOverlay = styled(motion.div)`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+`;
+
+const ModalContent = styled(motion.div)`
+  background: white;
+  border-radius: 8px;
+  max-width: 800px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: ${({ theme }) => theme.shadows.large};
+`;
+
+const CloseButton = styled.button`
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: ${({ theme }) => theme.colors.grayDark};
+  z-index: 10;
+
+  &:hover {
+    color: ${({ theme }) => theme.colors.primary};
+  }
+`;
+
+const ModalImage = styled.div`
+  height: 300px;
+  background-image: ${({ image }) => `url(${image})`};
+  background-size: cover;
+  background-position: center;
+  border-radius: 8px 8px 0 0;
+`;
+
+const ModalBody = styled.div`
+  padding: 2rem;
+`;
+
+const ModalTitle = styled.h2`
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: ${({ theme }) => theme.colors.primary};
+`;
+
+const ModalDescription = styled.div`
+  white-space: pre-wrap;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+`;
+
+const ModalStats = styled.div`
+  display: flex;
+  justify-content: space-between;
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid ${({ theme }) => theme.colors.gray};
+`;
+
+
 const PetitionTitle = styled.h3`
     font-size: 1.1rem;
     margin-bottom: 0.5rem;
@@ -167,6 +242,18 @@ const mockPetitions = [
 ];
 
 function HomePage() {
+    const [selectedPetition, setSelectedPetition] = useState(null);
+
+    // Функция для открытия модалки
+    const openModal = (petition) => {
+        setSelectedPetition(petition);
+    };
+
+    // Функция для закрытия модалки
+    const closeModal = () => {
+        setSelectedPetition(null);
+    };
+
     return (
         <HomePageLayout>
             {/* Навигационные табы */}
@@ -205,6 +292,8 @@ function HomePage() {
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.3, delay: petition.id * 0.1 }}
+                            onClick={() => openModal(petition)}
+                            style={{ cursor: 'pointer' }}
                         >
                             <PetitionCard>
                                 <PetitionImage image={petition.image} />
@@ -220,6 +309,40 @@ function HomePage() {
                         </motion.div>
                     ))}
                 </PetitionsGrid>
+                <AnimatePresence>
+                    {selectedPetition && (
+                        <ModalOverlay
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            onClick={closeModal}
+                        >
+                            <ModalContent
+                                initial={{ y: 50, opacity: 0 }}
+                                animate={{ y: 0, opacity: 1 }}
+                                exit={{ y: 50, opacity: 0 }}
+                                transition={{ type: 'spring', damping: 25 }}
+                                onClick={(e) => e.stopPropagation()}
+                            >
+                                <CloseButton onClick={closeModal}>
+                                    <FaTimes />
+                                </CloseButton>
+
+                                <ModalImage image={selectedPetition.image} />
+
+                                <ModalBody>
+                                    <ModalTitle>{selectedPetition.title}</ModalTitle>
+                                    <ModalDescription>{selectedPetition.description}</ModalDescription>
+
+                                    <ModalStats>
+                                        <VotesCount>{selectedPetition.votes.toLocaleString()} голосов</VotesCount>
+                                        <PetitionCategory>{selectedPetition.category}</PetitionCategory>
+                                    </ModalStats>
+                                </ModalBody>
+                            </ModalContent>
+                        </ModalOverlay>
+                    )}
+                </AnimatePresence>
             </ContentSection>
         </HomePageLayout>
     );
