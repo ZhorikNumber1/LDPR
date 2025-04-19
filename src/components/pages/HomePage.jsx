@@ -282,8 +282,8 @@ function HomePage() {
             >
                 <SectionHeader>
                     <SectionTitle>Лента предложений</SectionTitle>
-                    <PrimaryButton as={NavLink} to="/">
-                        Все петиции
+                    <PrimaryButton as={NavLink} to="/admin">
+                        Админ панель
                     </PrimaryButton>
                 </SectionHeader>
 
