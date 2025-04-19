@@ -3,8 +3,9 @@ import styled from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
 import { NavLink } from 'react-router-dom';
 import { Card, CardTitle, CardContent } from '../common/Card';
-import { PrimaryButton } from '../common/Button';
-import {FaFire, FaEdit, FaComments, FaUsers, FaTimes} from 'react-icons/fa';
+import { PrimaryButton, SecondaryButton } from '../common/Button';
+import {FaFire, FaEdit, FaComments, FaUsers, FaLightbulb, FaTimes, FaThumbsUp, FaFileAlt} from 'react-icons/fa';
+import {TextAreaInput} from "../common/Input.jsx";
 
 // Стили для новой структуры
 const HomePageLayout = styled.div`
@@ -335,6 +336,170 @@ function HomePage() {
                                     <ModalTitle>{selectedPetition.title}</ModalTitle>
                                     <ModalDescription>{selectedPetition.description}</ModalDescription>
 
+                                    {/* Добавленные элементы */}
+                                    <div style={{ margin: '1.5rem 0' }}>
+                                        {!selectedPetition.hasVoted ? (
+                                            <div style={{ marginBottom: '1rem'}}>
+                                            <PrimaryButton
+                                                onClick={() => {
+                                                    setSelectedPetition(prev => ({
+                                                        ...prev,
+                                                        votes: prev.votes + 1,
+                                                        hasVoted: true
+                                                    }));
+                                                }}
+                                                style={{ marginRight: '1rem' }}
+                                            >
+                                                <FaThumbsUp /> Поддержать
+                                            </PrimaryButton>
+                                            </div>
+                                        ) : (
+                                            <div style={{ color: '#1a8f3a', marginBottom: '1rem' }}>
+                                                Вы поддержали эту петицию!
+                                            </div>
+                                        )}
+
+                                        <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem' }}>
+                                            {!selectedPetition.showImprovement ? (
+                                                <SecondaryButton
+                                                    onClick={() => {
+                                                        setSelectedPetition(prev => ({
+                                                            ...prev,
+                                                            showImprovement: true,
+                                                            showCounterProposal: false // Закрываем контр-петицию если открыто
+                                                        }));
+                                                    }}
+                                                >
+                                                    <FaLightbulb /> Предложить улучшение
+                                                </SecondaryButton>
+                                            ) : (
+                                                <SecondaryButton
+                                                    onClick={() => {
+                                                        setSelectedPetition(prev => ({
+                                                            ...prev,
+                                                            showImprovement: false
+                                                        }));
+                                                    }}
+                                                    variant="outlined"
+                                                >
+                                                    <FaTimes /> Скрыть улучшение
+                                                </SecondaryButton>
+                                            )}
+
+                                            {!selectedPetition.showCounterProposal ? (
+                                                <SecondaryButton
+                                                    onClick={() => {
+                                                        setSelectedPetition(prev => ({
+                                                            ...prev,
+                                                            showCounterProposal: true,
+                                                            showImprovement: false // Закрываем улучшение если открыто
+                                                        }));
+                                                    }}
+                                                >
+                                                    <FaFileAlt /> Контр-петиция
+                                                </SecondaryButton>
+                                            ) : (
+                                                <SecondaryButton
+                                                    onClick={() => {
+                                                        setSelectedPetition(prev => ({
+                                                            ...prev,
+                                                            showCounterProposal: false
+                                                        }));
+                                                    }}
+                                                    variant="outlined"
+                                                >
+                                                    <FaTimes /> Скрыть контр-петицию
+                                                </SecondaryButton>
+                                            )}
+                                        </div>
+
+                                        {selectedPetition.showImprovement && (
+                                            <>
+                                                <TextAreaInput
+                                                    label="Ваше предложение по улучшению"
+                                                    value={selectedPetition.improvementText || ''}
+                                                    onChange={(e) => {
+                                                        setSelectedPetition(prev => ({
+                                                            ...prev,
+                                                            improvementText: e.target.value
+                                                        }));
+                                                    }}
+                                                    style={{ marginTop: '1rem' }}
+                                                />
+                                                <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
+                                                    <PrimaryButton
+                                                        onClick={() => {
+                                                            // Логика отправки предложения
+                                                            setSelectedPetition(prev => ({
+                                                                ...prev,
+                                                                improvementSubmitted: true,
+                                                                showImprovement: false
+                                                            }));
+                                                        }}
+                                                        disabled={!selectedPetition.improvementText}
+                                                    >
+                                                        Отправить улучшение
+                                                    </PrimaryButton>
+                                                </div>
+                                            </>
+                                        )}
+
+                                        {selectedPetition.showCounterProposal && (
+                                            <>
+                                                <TextAreaInput
+                                                    label="Ваша контр-петиция"
+                                                    value={selectedPetition.counterProposalText || ''}
+                                                    onChange={(e) => {
+                                                        setSelectedPetition(prev => ({
+                                                            ...prev,
+                                                            counterProposalText: e.target.value
+                                                        }));
+                                                    }}
+                                                    style={{ marginTop: '1rem' }}
+                                                />
+                                                <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
+                                                    <PrimaryButton
+                                                        onClick={() => {
+                                                            // Логика отправки контр-петиции
+                                                            setSelectedPetition(prev => ({
+                                                                ...prev,
+                                                                counterProposalSubmitted: true,
+                                                                showCounterProposal: false
+                                                            }));
+                                                        }}
+                                                        disabled={!selectedPetition.counterProposalText}
+                                                    >
+                                                        Отправить контр-петицию
+                                                    </PrimaryButton>
+                                                </div>
+                                            </>
+                                        )}
+
+                                        {selectedPetition.improvementSubmitted && (
+                                            <div style={{
+                                                color: '#1a8f3a',
+                                                marginTop: '1rem',
+                                                padding: '1rem',
+                                                background: '#f0f9f0',
+                                                borderRadius: '4px'
+                                            }}>
+                                                Ваше предложение по улучшению было отправлено!
+                                            </div>
+                                        )}
+
+                                        {selectedPetition.counterProposalSubmitted && (
+                                            <div style={{
+                                                color: '#1a8f3a',
+                                                marginTop: '1rem',
+                                                padding: '1rem',
+                                                background: '#f0f9f0',
+                                                borderRadius: '4px'
+                                            }}>
+                                                Ваша контр-петиция была отправлена!
+                                            </div>
+                                        )}
+                                    </div>
+
                                     <ModalStats>
                                         <VotesCount>{selectedPetition.votes.toLocaleString()} голосов</VotesCount>
                                         <PetitionCategory>{selectedPetition.category}</PetitionCategory>
@@ -344,6 +509,7 @@ function HomePage() {
                         </ModalOverlay>
                     )}
                 </AnimatePresence>
+
             </ContentSection>
         </HomePageLayout>
     );

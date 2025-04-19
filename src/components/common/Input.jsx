@@ -9,6 +9,7 @@ const InputContainer = styled.div`
 const Label = styled.label`
     display: block;
     margin-bottom: 0.5rem;
+    margin-top: 0.5rem;
     font-weight: 600;
     color: ${({ theme }) => theme.colors.black};
 `;
