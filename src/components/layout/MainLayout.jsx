@@ -52,21 +52,6 @@ export function MainLayout({ children }) {
         <>
             <Header />
             <SubNav>
-                <SubNavLink to="/" end>
-                    <FaFire /> Главная
-                </SubNavLink>
-                <SubNavLink to="/create-path">
-                    <FaEdit /> Создать петицию
-                </SubNavLink>
-                <SubNavLink to="/chat">
-                    <FaComments /> Чат с партиями
-                </SubNavLink>
-                <SubNavLink to="/parts">
-                    <FaUsers /> Статистика партий
-                </SubNavLink>
-                <SubNavLink to="/calendar">
-                    <FaCalendarAlt /> Календарь событий
-                </SubNavLink>
             </SubNav>
             <Main
                 initial="hidden"
