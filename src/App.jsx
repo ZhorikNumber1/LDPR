@@ -5,6 +5,7 @@ import AccountPage from './components/pages/AccountPage';
 import AdminComponent from "./components/admin/AdminComponent.jsx";
 import ChatPage from './components/pages/ChatPage.jsx';
 import CreatePath from './components/pages/CreatePath.jsx';
+import StatsParty from './components/pages/StatsParty.jsx'
 
 function App() {
     return (
@@ -15,6 +16,7 @@ function App() {
             <Route path="/chat" element={<ChatPage />} />
             <Route path="/admin" element={<AdminComponent/>}/>
             <Route path="/create-path" element={<CreatePath />} />
+            <Route path="/parts" element={<StatsParty />} />
         </Routes>
     );
 }
