@@ -13,39 +13,83 @@ function NavBar() {
     );
 }
 
-function RequestItem({ request, onApprove, onReject }) {
+function RequestItem({ request, onSupport, onTake }) {
     return (
         <div className="request-item fade-in">
             <h4>{request.title}</h4>
             <p>{request.description}</p>
+            <div className="request-stats">
+                <span>Поддержали: {request.supportCount}</span>
+                {request.deputies.length > 0 && (
+                    <span>В работе: {request.deputies.join(', ')}</span>
+                )}
+            </div>
             <div className="request-actions">
-                <button className="btn approve" onClick={() => onApprove(request.id)}>Принять</button>
-                <button className="btn reject" onClick={() => onReject(request.id)}>Отклонить</button>
+                <button
+                    className="btn support"
+                    onClick={() => onSupport(request.id)}
+                >
+                    👍 Поддержать
+                </button>
+                <button
+                    className="btn take"
+                    onClick={() => onTake(request.id)}
+                >
+                    🚩 Взять в работу
+                </button>
             </div>
         </div>
     );
 }
 
 function AdminComponent() {
-    const [requests, setRequests] = useState([]);
+    // mock top-рекомендации
+    const [topRequests, setTopRequests] = useState([]);
 
-    // Mock data load
     useEffect(() => {
         const mock = [
-            { id: 1, title: 'Обращение пользователя Иванова', description: 'Просьба добавить новую фичу.' },
-            { id: 2, title: 'Обращение пользователя Петровой', description: 'Сообщение об ошибке при входе.' },
-            { id: 3, title: 'Обращение пользователя Сидорова', description: 'Запрос на удаление аккаунта.' },
+            {
+                id: 1,
+                title: 'Бесплатный интернет в парках',
+                description: 'Просьба обеспечить Wi-Fi в городских парках.',
+                supportCount: 24,
+                deputies: [],
+            },
+            {
+                id: 2,
+                title: 'Ремонт дорог',
+                description: 'Необходимо отремонтировать дорогу на улице Ленина.',
+                supportCount: 15,
+                deputies: ['Иванова (СП)'],
+            },
+            {
+                id: 3,
+                title: 'Открытие новой школы',
+                description: 'Строительство школы на северо-западе города.',
+                supportCount: 30,
+                deputies: ['Петров (ЕДР)', 'Сидоров (ЯБЛОКО)'],
+            },
         ];
-        setTimeout(() => setRequests(mock), 500); // эмуляция загрузки
+        setTopRequests(mock);
     }, []);
 
-    const handleApprove = (id) => {
-        setRequests(prev => prev.filter(r => r.id !== id));
-        // здесь можно добавить уведомление или логику
+    const handleSupport = (id) => {
+        setTopRequests(prev =>
+            prev.map(r =>
+                r.id === id ? { ...r, supportCount: r.supportCount + 1 } : r
+            )
+        );
     };
 
-    const handleReject = (id) => {
-        setRequests(prev => prev.filter(r => r.id !== id));
+    const handleTake = (id) => {
+        const currentDeputy = 'ТекущийДепутат (СП)'; // заменить реальным именем
+        setTopRequests(prev =>
+            prev.map(r =>
+                r.id === id && !r.deputies.includes(currentDeputy)
+                    ? { ...r, deputies: [...r.deputies, currentDeputy] }
+                    : r
+            )
+        );
     };
 
     return (
@@ -53,23 +97,21 @@ function AdminComponent() {
             <NavBar />
             <main className="admin-main">
                 <header className="admin-header fade-in">
-                    <h2 className="admin-title">Административная страница</h2>
-                    <p className="admin-description">Здесь вы можете просмотреть и модерать обращения пользователей.</p>
+                    <h2 className="admin-title">Топ обращений</h2>
+                    <p className="admin-description">
+                        Здесь отображаются предложения, которые можно поддержать и взять в работу.
+                    </p>
                 </header>
 
-                <section id="requests" className="requests-section">
-                    {requests.length > 0 ? (
-                        requests.map(req => (
-                            <RequestItem
-                                key={req.id}
-                                request={req}
-                                onApprove={handleApprove}
-                                onReject={handleReject}
-                            />
-                        ))
-                    ) : (
-                        <p className="no-requests fade-in">Нет новых обращений.</p>
-                    )}
+                <section id="top-requests" className="requests-section">
+                    {topRequests.map(req => (
+                        <RequestItem
+                            key={req.id}
+                            request={req}
+                            onSupport={handleSupport}
+                            onTake={handleTake}
+                        />
+                    ))}
                 </section>
             </main>
         </div>
