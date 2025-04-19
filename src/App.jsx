@@ -1,16 +1,20 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import ClientComponent from './components/client/ClientComponent'
-import AdminComponent from './components/admin/AdminComponent'
+import {Routes, Route} from 'react-router-dom';
+import MainLayout from './components/layout/MainLayout';
+import HomePage from './components/pages/HomePage';
+import AccountPage from './components/pages/AccountPage';
+import AdminComponent from "./components/admin/AdminComponent.jsx";
+import ChatPage from './components/pages/ChatPage.jsx';
 
 function App() {
     return (
-        <BrowserRouter>
-            <Routes>
-                <Route path="/" element={<ClientComponent />} />
-                <Route path="/admin" element={<AdminComponent />} />
-            </Routes>
-        </BrowserRouter>
-    )
+        <Routes>
+            <Route path="/" element={<MainLayout/>}/>
+            <Route index element={<HomePage/>}/>
+            <Route path="account" element={<AccountPage/>}/>
+            <Route path="/chat" element={<ChatPage />} />
+            <Route path="/admin" element={<AdminComponent/>}/>
+        </Routes>
+    );
 }
 
-export default App
+export default App;
