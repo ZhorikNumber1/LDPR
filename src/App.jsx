@@ -14,7 +14,7 @@ function App() {
             <Route path="account" element={<AccountPage/>}/>
             <Route path="/chat" element={<ChatPage />} />
             <Route path="/admin" element={<AdminComponent/>}/>
-            <Route path="/create_peth" element={<CreatePath />} />
+            <Route path="/create-path" element={<CreatePath />} />
         </Routes>
     );
 }

@@ -174,7 +174,7 @@ function HomePage() {
                 <Tab to="/" end>
                     <FaFire/> Главная
                 </Tab>
-                <Tab to="/create_peth">
+                <Tab to="/create-path">
                     <FaEdit/> Создать петицию
                 </Tab>
                 <Tab to="/chat">
@@ -193,7 +193,7 @@ function HomePage() {
             >
                 <SectionHeader>
                     <SectionTitle>Лента предложений</SectionTitle>
-                    <PrimaryButton as={NavLink} to="/petitions">
+                    <PrimaryButton as={NavLink} to="/">
                         Все петиции
                     </PrimaryButton>
                 </SectionHeader>

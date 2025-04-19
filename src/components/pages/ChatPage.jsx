@@ -360,7 +360,7 @@ const ChatPage = () => {
                 <Tab to="/" end>
                     <FaFire/> Главная
                 </Tab>
-                <Tab to="/create_peth">
+                <Tab to="/create-path">
                     <FaEdit/> Создать петицию
                 </Tab>
                 <Tab to="/chat">
