@@ -5,6 +5,7 @@ import styled from 'styled-components';
 const ProfileCard = styled(Card)`
     text-align: center;
     padding: 1rem;
+    cursor: ${({ onClick }) => (onClick ? 'pointer' : 'default')};
 `;
 
 const Avatar = styled.img`
@@ -25,9 +26,9 @@ const Party = styled.p`
     font-size: 0.9rem;
 `;
 
-export default function DeputyProfile({ deputy }) {
+export default function DeputyProfile({ deputy, onClick, style }) {
     return (
-        <ProfileCard>
+        <ProfileCard onClick={onClick} style={style}>
             <Avatar src={deputy.avatar} alt={deputy.name} />
             <Name>{deputy.name}</Name>
             <Party>Партия: {deputy.party}</Party>

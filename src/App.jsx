@@ -7,6 +7,7 @@ import ChatPage from './components/pages/ChatPage.jsx';
 import CreatePath from './components/pages/CreatePath.jsx';
 import StatsParty from './components/pages/StatsParty.jsx'
 import PoliticalCalendar from "./components/pages/PoliticalCalendar.jsx";
+import DeputyProfilePage from './components/admin/DeputyProfilePage.jsx';
 
 function App() {
     return (
@@ -14,11 +15,12 @@ function App() {
             <Route path="/" element={<MainLayout/>}/>
             <Route index element={<HomePage/>}/>
             <Route path="account" element={<AccountPage/>}/>
-            <Route path="/chat" element={<ChatPage />} />
+            <Route path="/chat" element={<ChatPage/>}/>
             <Route path="/admin" element={<AdminComponent/>}/>
-            <Route path="/create-path" element={<CreatePath />} />
-            <Route path="/parts" element={<StatsParty />} />
-            <Route path="calendar" element={<PoliticalCalendar />} />
+            <Route path="/admin/deputy/:id" element={<DeputyProfilePage/>}/>
+            <Route path="/create-path" element={<CreatePath/>}/>
+            <Route path="/parts" element={<StatsParty/>}/>
+            <Route path="calendar" element={<PoliticalCalendar/>}/>
         </Routes>
     );
 }

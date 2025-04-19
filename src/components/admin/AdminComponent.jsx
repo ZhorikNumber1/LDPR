@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 import MainLayout from '../layout/MainLayout';
 import DeputyProfile from './DeputyProfile';
-import { Card, CardTitle } from '../common/Card';
-import { AdminPrimaryButton, AdminSecondaryButton } from './AdminButton';
+import {Card, CardTitle} from '../common/Card';
+import {AdminPrimaryButton, AdminSecondaryButton} from './AdminButton';
 import styled from 'styled-components';
-import { motion } from 'framer-motion';
-import { FaSearch } from 'react-icons/fa';
+import {motion} from 'framer-motion';
+import {FaSearch} from 'react-icons/fa';
+import {useNavigate} from 'react-router-dom';
 
 const Container = styled.div`
     display: flex;
@@ -14,7 +15,7 @@ const Container = styled.div`
 
 const Sidebar = styled.aside`
     width: 280px;
-    background-color: ${({ theme }) => theme.colors.white};
+    background-color: ${({theme}) => theme.colors.white};
     border-radius: 8px;
     padding: 1rem;
     flex-shrink: 0;
@@ -24,9 +25,9 @@ const PartySelect = styled.select`
     width: 100%;
     padding: 0.5rem;
     margin-top: 1rem;
-    border: 1px solid ${({ theme }) => theme.colors.grayLight};
+    border: 1px solid ${({theme}) => theme.colors.grayLight};
     border-radius: 4px;
-    background: ${({ theme }) => theme.colors.white};
+    background: ${({theme}) => theme.colors.white};
 `;
 
 const NavLinks = styled.nav`
@@ -39,9 +40,10 @@ const NavLinks = styled.nav`
 const NavButton = styled(AdminSecondaryButton)`
     width: 100%;
     text-align: left;
+
     &.active {
-        background-color: ${({ theme }) => theme.colors.primaryLight};
-        color: ${({ theme }) => theme.colors.primaryDark};
+        background-color: ${({theme}) => theme.colors.primaryLight};
+        color: ${({theme}) => theme.colors.primaryDark};
         font-weight: bold;
     }
 `;
@@ -68,26 +70,27 @@ const SearchWrapper = styled.div`
         top: 50%;
         left: 0.75rem;
         transform: translateY(-50%);
-        color: ${({ theme }) => theme.colors.grayDark};
+        color: ${({theme}) => theme.colors.grayDark};
     }
 
     input {
         width: 100%;
         padding: 0.5rem 0.5rem 0.5rem 2.5rem;
-        border: 1px solid ${({ theme }) => theme.colors.grayLight};
+        border: 1px solid ${({theme}) => theme.colors.grayLight};
         border-radius: 4px;
+
         &:focus {
             outline: none;
-            border-color: ${({ theme }) => theme.colors.primary};
+            border-color: ${({theme}) => theme.colors.primary};
         }
     }
 `;
 
 const Select = styled.select`
     padding: 0.5rem 1rem;
-    border: 1px solid ${({ theme }) => theme.colors.grayLight};
+    border: 1px solid ${({theme}) => theme.colors.grayLight};
     border-radius: 4px;
-    background: ${({ theme }) => theme.colors.white};
+    background: ${({theme}) => theme.colors.white};
 `;
 
 const PetitionsGrid = styled.div`
@@ -104,8 +107,8 @@ const PetitionCard = styled(Card)`
 
 const PetitionImage = styled.div`
     height: 140px;
-    background-color: ${({ theme }) => theme.colors.grayLight};
-    background-image: ${({ image }) => `url(${image})`};
+    background-color: ${({theme}) => theme.colors.grayLight};
+    background-image: ${({image}) => `url(${image})`};
     background-size: cover;
     background-position: center;
     border-radius: 8px 8px 0 0;
@@ -119,7 +122,7 @@ const PetitionContent = styled.div`
 `;
 
 const PetitionDescription = styled.p`
-    color: ${({ theme }) => theme.colors.grayDark};
+    color: ${({theme}) => theme.colors.grayDark};
     font-size: 0.9rem;
     flex: 1;
     margin: 0.5rem 0 1rem;
@@ -130,27 +133,29 @@ const PetitionStats = styled.div`
     justify-content: space-between;
     align-items: center;
     font-size: 0.85rem;
-    color: ${({ theme }) => theme.colors.grayDark};
+    color: ${({theme}) => theme.colors.grayDark};
 `;
 
 const VotesCount = styled.span`
-    background-color: ${({ theme }) => theme.colors.primaryLight};
-    color: ${({ theme }) => theme.colors.primaryDark};
+    background-color: ${({theme}) => theme.colors.primaryLight};
+    color: ${({theme}) => theme.colors.primaryDark};
     padding: 0.25rem 0.75rem;
     border-radius: 20px;
     font-weight: 600;
 `;
 
 const DeputiesList = styled.span`
-  font-size: 0.85rem;
-  color: ${({ theme }) => theme.colors.secondaryDark};
+    font-size: 0.85rem;
+    color: ${({theme}) => theme.colors.secondaryDark};
 `;
 
 export default function AdminComponent() {
+    const navigate = useNavigate();
     const currentDeputy = {
-        name: 'Иванов Иван',
+        id: 'zhirinovsky',
+        name: 'Владимир Жириновский',
         party: 'ЛДПР',
-        avatar: 'https://i.pravatar.cc/150?img=3',
+        avatar: 'data:image/jpeg;base64,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',
     };
 
     const parties = ['Все партии', 'ЛДПР', 'СП', 'ЕР', 'ЯБЛОКО'];
@@ -211,7 +216,16 @@ export default function AdminComponent() {
         <MainLayout>
             <Container>
                 <Sidebar>
-                    <DeputyProfile deputy={currentDeputy} />
+                    <DeputyProfile
+                        deputy={currentDeputy}
+                        style={{cursor: 'pointer'}}
+                        onClick={() =>
+                            navigate(
+                                `/admin/deputy/${currentDeputy.id}`,
+                                {state: {deputy: currentDeputy}}
+                            )
+                        }
+                    />
 
                     <PartySelect
                         value={partyFilter}
@@ -241,10 +255,10 @@ export default function AdminComponent() {
                 </Sidebar>
 
                 <Content>
-                    <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
+                    <motion.div initial={{opacity: 0, y: 15}} animate={{opacity: 1, y: 0}} transition={{duration: 0.4}}>
                         <Controls>
                             <SearchWrapper>
-                                <FaSearch />
+                                <FaSearch/>
                                 <input
                                     type="text"
                                     placeholder="Поиск..."
@@ -269,9 +283,10 @@ export default function AdminComponent() {
 
                     <PetitionsGrid>
                         {listToShow.map(p => (
-                            <motion.div key={p.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, delay: p.id * 0.1 }}>
+                            <motion.div key={p.id} initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}}
+                                        transition={{duration: 0.3, delay: p.id * 0.1}}>
                                 <PetitionCard>
-                                    <PetitionImage image={p.image} />
+                                    <PetitionImage image={p.image}/>
                                     <PetitionContent>
                                         <CardTitle>{p.title}</CardTitle>
                                         <PetitionDescription>{p.description}</PetitionDescription>
@@ -285,7 +300,10 @@ export default function AdminComponent() {
                                                         setPetitions(prev =>
                                                             prev.map(item =>
                                                                 item.id === p.id
-                                                                    ? { ...item, deputies: [...item.deputies, currentDeputy.name] }
+                                                                    ? {
+                                                                        ...item,
+                                                                        deputies: [...item.deputies, currentDeputy.name]
+                                                                    }
                                                                     : item
                                                             )
                                                         )
