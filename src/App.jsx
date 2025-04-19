@@ -6,6 +6,7 @@ import AdminComponent from "./components/admin/AdminComponent.jsx";
 import ChatPage from './components/pages/ChatPage.jsx';
 import CreatePath from './components/pages/CreatePath.jsx';
 import StatsParty from './components/pages/StatsParty.jsx'
+import PoliticalCalendar from "./components/pages/PoliticalCalendar.jsx";
 
 function App() {
     return (
@@ -17,6 +18,7 @@ function App() {
             <Route path="/admin" element={<AdminComponent/>}/>
             <Route path="/create-path" element={<CreatePath />} />
             <Route path="/parts" element={<StatsParty />} />
+            <Route path="calendar" element={<PoliticalCalendar />} />
         </Routes>
     );
 }

@@ -1,162 +1,162 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
+import MainLayout from '../layout/MainLayout';
 import styled from 'styled-components';
-import Calendar from 'react-calendar';
-import { format } from 'date-fns';
-import { ru } from 'date-fns/locale';
 import { motion } from 'framer-motion';
-import { CardContent } from '../common/Card';
+import { FaCalendarAlt, FaDownload } from 'react-icons/fa';
 
-const CalendarContainer = styled.div`
-  .react-calendar {
-    width: 100%;
-    border: none;
-    font-family: inherit;
-    box-shadow: none;
-  }
-
-  .react-calendar__tile {
-    padding: 0.75em 0.5em;
-    border-radius: 4px;
-    transition: all ${({ theme }) => theme.transitions.fast};
-  }
-
-  .react-calendar__tile--active {
-    background: ${({ theme }) => theme.colors.primary};
-    color: white;
-  }
-
-  .react-calendar__tile--now {
-    background: ${({ theme }) => theme.colors.primaryLight};
-  }
-
-  .react-calendar__tile--hasActive {
-    background: ${({ theme }) => theme.colors.primary};
-    color: white;
-  }
-
-  .react-calendar__tile:hover {
-    background: ${({ theme }) => theme.colors.gray};
-  }
+const Container = styled.div`
+    background: ${({ theme }) => theme.colors.background};
+    padding: 2rem 1rem;
+    min-height: calc(100vh - 80px);
 `;
 
-const EventsList = styled.ul`
-  margin-top: 1.5rem;
+const CalendarBox = styled.div`
+    background: ${({ theme }) => theme.colors.white};
+    border-radius: 12px;
+    max-width: 900px;
+    margin: 0 auto 2rem;
+    padding: 2rem;
+    box-shadow: ${({ theme }) => theme.shadows.medium};
 `;
 
-const EventItem = styled.li`
-  padding: 1rem;
-  margin-bottom: 0.5rem;
-  background-color: ${({ theme }) => theme.colors.grayLight};
+const Header = styled.div`
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+
+    h2 {
+        margin: 0;
+        font-size: 1.75rem;
+        color: ${({ theme }) => theme.colors.primaryDark};
+    }
+`;
+
+const Grid = styled.div`
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    border: 1px solid ${({ theme }) => theme.colors.grayLight};
+    border-radius: 8px;
+    overflow: hidden;
+`;
+
+const Cell = styled.div`
+    min-height: 100px;
+    padding: 0.75rem;
+    border-right: 1px solid ${({ theme }) => theme.colors.grayLight};
+    border-bottom: 1px solid ${({ theme }) => theme.colors.grayLight};
+    background: ${({ isHeader, theme }) =>
+            isHeader ? theme.colors.primary : theme.colors.white};
+    color: ${({ isHeader, theme }) =>
+            isHeader ? theme.colors.white : theme.colors.text};
+    font-weight: ${({ isHeader }) => (isHeader ? '600' : '400')};
+    position: relative;
+
+    &:nth-child(7n) {
+        border-right: none;
+    }
+    &:nth-last-child(-n+7) {
+        border-bottom: none;
+    }
+`;
+
+const DayNumber = styled.div`
+    font-size: 1rem;
+    margin-bottom: 0.25rem;
+`;
+
+const Event = styled.div`
+  background: ${({ theme }) => theme.colors.primaryLight};
+  color: ${({ theme }) => theme.colors.primaryDark};
+  padding: 0.25rem 0.5rem;
   border-radius: 4px;
+  font-size: 0.75rem;
+  margin-top: 0.25rem;
+  box-shadow: ${({ theme }) => theme.shadows.small};
+`;
+
+const ExportButton = styled.button`
   display: flex;
   align-items: center;
-  gap: 1rem;
-`;
-
-const EventDate = styled.div`
-  min-width: 60px;
-  text-align: center;
-  background-color: ${({ theme }) => theme.colors.primary};
+  gap: 0.5rem;
+  margin: 0 auto;
+  padding: 0.75rem 1.5rem;
+  background: ${({ theme }) => theme.colors.primary};
   color: ${({ theme }) => theme.colors.white};
-  padding: 0.5rem;
-  border-radius: 4px;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+  box-shadow: ${({ theme }) => theme.shadows.small};
+  transition: background 0.2s;
+
+  &:hover {
+    background: ${({ theme }) => theme.colors.primaryDark};
+  }
 `;
 
-const EventDay = styled.div`
-  font-size: 1.5rem;
-  font-weight: bold;
-  line-height: 1;
-`;
+export default function PoliticalCalendar() {
+    const [date] = useState(new Date());
+    const year = date.getFullYear();
+    const month = date.getMonth();
+    const firstDay = new Date(year, month, 1).getDay();
+    const blanks = (firstDay + 6) % 7;
+    const days = new Date(year, month + 1, 0).getDate();
+    const cells = [
+        ...Array(blanks).fill(null),
+        ...Array.from({ length: days }, (_, i) => i + 1),
+    ];
 
-const EventMonth = styled.div`
-  font-size: 0.75rem;
-  text-transform: uppercase;
-`;
-
-const EventTitle = styled.div`
-  font-weight: 600;
-`;
-
-// Заглушка данных о событиях
-const EVENTS = [
-    { id: 1, date: new Date(2023, 6, 15), title: 'Заседание Государственной Думы' },
-    { id: 2, date: new Date(2023, 6, 20), title: 'Встреча с избирателями' },
-    { id: 3, date: new Date(2023, 6, 25), title: 'Обсуждение нового законопроекта' },
-    { id: 4, date: new Date(2023, 7, 5), title: 'Парламентские слушания' },
-    { id: 5, date: new Date(2023, 7, 12), title: 'Пресс-конференция' },
-];
-
-function PoliticalCalendar() {
-    const [date, setDate] = useState(new Date());
-
-    const tileContent = ({ date, view }) => {
-        if (view === 'month') {
-            const hasEvent = EVENTS.some(event =>
-                event.date.getDate() === date.getDate() &&
-                event.date.getMonth() === date.getMonth() &&
-                event.date.getFullYear() === date.getFullYear()
-            );
-
-            return hasEvent ? <div style={{ height: '4px', width: '4px', backgroundColor: '#1a5fb4', borderRadius: '50%', margin: '0 auto' }} /> : null;
-        }
+    // Мокируем события, актуальные для граждан
+    const eventsMap = {
+        5: ['Публичные слушания ЖКХ'],
+        12: ['Выборы в муниципальный совет'],
+        18: ['Открытый митинг за чистый парк'],
+        23: ['Информационная встреча по реформе ЖКХ'],
     };
 
-    const selectedDateEvents = EVENTS.filter(event =>
-        event.date.getDate() === date.getDate() &&
-        event.date.getMonth() === date.getMonth() &&
-        event.date.getFullYear() === date.getFullYear()
-    );
+    const weekdays = ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
 
     return (
-        <CardContent>
-            <CalendarContainer>
-                <Calendar
-                    onChange={setDate}
-                    value={date}
-                    locale={ru}
-                    tileContent={tileContent}
-                />
-            </CalendarContainer>
-
-            <EventsList>
-                <motion.h3
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.3 }}
-                    style={{ margin: '1.5rem 0 1rem' }}
+        <MainLayout>
+            <Container>
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5 }}
                 >
-                    События на {format(date, 'd MMMM yyyy', { locale: ru })}
-                </motion.h3>
+                    <CalendarBox>
+                        <Header>
+                            <FaCalendarAlt size={28} />
+                            <h2>
+                                Политический календарь: {date.toLocaleString('ru', { month: 'long', year: 'numeric' })}
+                            </h2>
+                        </Header>
 
-                {selectedDateEvents.length > 0 ? (
-                    selectedDateEvents.map(event => (
-                        <motion.div
-                            key={event.id}
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.3 }}
-                        >
-                            <EventItem>
-                                <EventDate>
-                                    <EventDay>{format(event.date, 'd')}</EventDay>
-                                    <EventMonth>{format(event.date, 'MMM', { locale: ru })}</EventMonth>
-                                </EventDate>
-                                <EventTitle>{event.title}</EventTitle>
-                            </EventItem>
-                        </motion.div>
-                    ))
-                ) : (
-                    <motion.p
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ duration: 0.3 }}
-                    >
-                        На выбранную дату событий не запланировано.
-                    </motion.p>
-                )}
-            </EventsList>
-        </CardContent>
+                        <Grid>
+                            {weekdays.map(d => (
+                                <Cell key={d} isHeader>{d}</Cell>
+                            ))}
+                            {cells.map((day, idx) => (
+                                <Cell key={idx}>
+                                    {day && (
+                                        <>
+                                            <DayNumber>{day}</DayNumber>
+                                            {eventsMap[day]?.map((ev, i) => (
+                                                <Event key={i}>{ev}</Event>
+                                            ))}
+                                        </>
+                                    )}
+                                </Cell>
+                            ))}
+                        </Grid>
+                    </CalendarBox>
+                </motion.div>
+
+                <ExportButton>
+                    <FaDownload /> Экспортировать в мой календарь
+                </ExportButton>
+            </Container>
+        </MainLayout>
     );
 }
-
-export default PoliticalCalendar;
