@@ -20,10 +20,19 @@ const Sidebar = styled.aside`
     flex-shrink: 0;
 `;
 
+const PartySelect = styled.select`
+    width: 100%;
+    padding: 0.5rem;
+    margin-top: 1rem;
+    border: 1px solid ${({ theme }) => theme.colors.grayLight};
+    border-radius: 4px;
+    background: ${({ theme }) => theme.colors.white};
+`;
+
 const NavLinks = styled.nav`
     display: flex;
     flex-direction: column;
-    margin-top: 2rem;
+    margin-top: 1.5rem;
     gap: 0.5rem;
 `;
 
@@ -133,18 +142,20 @@ const VotesCount = styled.span`
 `;
 
 const DeputiesList = styled.span`
-    font-size: 0.85rem;
-    color: ${({ theme }) => theme.colors.secondaryDark};
+  font-size: 0.85rem;
+  color: ${({ theme }) => theme.colors.secondaryDark};
 `;
 
 export default function AdminComponent() {
     const currentDeputy = {
         name: 'Иванов Иван',
-        party: 'Справедливая Россия',
+        party: 'ЛДПР',
         avatar: 'https://i.pravatar.cc/150?img=3',
     };
 
+    const parties = ['Все партии', 'ЛДПР', 'СП', 'ЕР', 'ЯБЛОКО'];
     const [view, setView] = useState('top');
+    const [partyFilter, setPartyFilter] = useState('Все партии');
     const [search, setSearch] = useState('');
     const [categoryFilter, setCategoryFilter] = useState('all');
     const [sortOrder, setSortOrder] = useState('desc');
@@ -183,6 +194,11 @@ export default function AdminComponent() {
     }, []);
 
     const filtered = petitions
+        .filter(p =>
+            (partyFilter === 'Все партии'
+                ? true
+                : p.deputies.some(d => d.includes(`(${partyFilter})`)))
+        )
         .filter(p => p.title.toLowerCase().includes(search.toLowerCase()))
         .filter(p => (categoryFilter === 'all' ? true : p.category === categoryFilter))
         .sort((a, b) => (sortOrder === 'asc' ? a.votes - b.votes : b.votes - a.votes));
@@ -196,6 +212,18 @@ export default function AdminComponent() {
             <Container>
                 <Sidebar>
                     <DeputyProfile deputy={currentDeputy} />
+
+                    <PartySelect
+                        value={partyFilter}
+                        onChange={e => setPartyFilter(e.target.value)}
+                    >
+                        {parties.map(p => (
+                            <option key={p} value={p}>
+                                {p}
+                            </option>
+                        ))}
+                    </PartySelect>
+
                     <NavLinks>
                         <NavButton
                             className={view === 'top' ? 'active' : ''}
@@ -256,7 +284,9 @@ export default function AdminComponent() {
                                                     onClick={() =>
                                                         setPetitions(prev =>
                                                             prev.map(item =>
-                                                                item.id === p.id ? { ...item, deputies: [...item.deputies, currentDeputy.name] } : item
+                                                                item.id === p.id
+                                                                    ? { ...item, deputies: [...item.deputies, currentDeputy.name] }
+                                                                    : item
                                                             )
                                                         )
                                                     }
