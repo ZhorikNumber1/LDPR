@@ -1,20 +1,23 @@
-import {useState} from 'react';
+import { useState } from 'react';
 import styled from 'styled-components';
-import {motion, AnimatePresence} from 'framer-motion';
-import {NavLink} from 'react-router-dom';
-import {Card, CardTitle} from '../common/Card';
-import {PrimaryButton} from '../common/Button';
-import {FaFire, FaEdit, FaComments, FaUsers, FaTimes, FaCalendarAlt} from 'react-icons/fa';
+import { motion, AnimatePresence } from 'framer-motion';
+import { NavLink } from 'react-router-dom';
+import { Card, CardTitle, CardContent } from '../common/Card';
+import { PrimaryButton, SecondaryButton } from '../common/Button';
+import {FaFire, FaEdit, FaComments, FaUsers, FaLightbulb, FaTimes, FaThumbsUp, FaFileAlt} from 'react-icons/fa';
+import {TextAreaInput} from "../common/Input.jsx";
 
+// Стили для новой структуры
 const HomePageLayout = styled.div`
     max-width: 1200px;
-    margin: 2rem auto;
-    padding: 0 1rem;
+    margin: 0 auto;
+    padding: 2rem 1rem;
 `;
+
 
 const NavTabs = styled.nav`
     display: flex;
-    border-bottom: 1px solid ${({theme}) => theme.colors.gray};
+    border-bottom: 1px solid ${({ theme }) => theme.colors.gray};
     margin-bottom: 2rem;
     overflow-x: auto;
 `;
@@ -22,21 +25,21 @@ const NavTabs = styled.nav`
 const Tab = styled(NavLink)`
     padding: 1rem 1.5rem;
     font-weight: 600;
-    color: ${({theme}) => theme.colors.grayDark};
+    color: ${({ theme }) => theme.colors.grayDark};
     border-bottom: 3px solid transparent;
     display: flex;
     align-items: center;
     gap: 0.5rem;
     white-space: nowrap;
-    transition: all ${({theme}) => theme.transitions.fast};
+    transition: all ${({ theme }) => theme.transitions.fast};
 
     &:hover {
-        color: ${({theme}) => theme.colors.primary};
+        color: ${({ theme }) => theme.colors.primary};
     }
 
     &.active {
-        color: ${({theme}) => theme.colors.primary};
-        border-bottom-color: ${({theme}) => theme.colors.primary};
+        color: ${({ theme }) => theme.colors.primary};
+        border-bottom-color: ${({ theme }) => theme.colors.primary};
     }
 `;
 
@@ -53,7 +56,7 @@ const SectionHeader = styled.div`
 
 const SectionTitle = styled.h2`
     font-size: 1.5rem;
-    color: ${({theme}) => theme.colors.primary};
+    color: ${({ theme }) => theme.colors.primary};
 `;
 
 const PetitionsGrid = styled.div`
@@ -63,48 +66,137 @@ const PetitionsGrid = styled.div`
 `;
 
 const PetitionCard = styled(Card)`
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
     cursor: pointer;
+    height: 100%;
     display: flex;
     flex-direction: column;
+
+    &:hover {
+        transform: translateY(-5px);
+        box-shadow: ${({ theme }) => theme.shadows.medium};
+    }
 `;
 
 const PetitionImage = styled.div`
     height: 160px;
-    background-color: ${({theme}) => theme.colors.grayLight};
-    background-image: url(${({src}) => src});
+    background-color: ${({ theme }) => theme.colors.grayLight};
+    border-radius: 8px 8px 0 0;
+    background-image: ${({ image }) => `url(${image})`};
     background-size: cover;
     background-position: center;
-    border-radius: 8px 8px 0 0;
 `;
 
 const PetitionContent = styled.div`
-    padding: 1rem;
+    padding: 1.5rem;
     flex: 1;
     display: flex;
     flex-direction: column;
 `;
 
+// Добавляем стили для модального окна
+const ModalOverlay = styled(motion.div)`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+`;
+
+const ModalContent = styled(motion.div)`
+  background: white;
+  border-radius: 8px;
+  max-width: 800px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: ${({ theme }) => theme.shadows.large};
+`;
+
+const CloseButton = styled.button`
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: ${({ theme }) => theme.colors.grayDark};
+  z-index: 10;
+
+  &:hover {
+    color: ${({ theme }) => theme.colors.primary};
+  }
+`;
+
+const ModalImage = styled.div`
+  height: 300px;
+  background-image: ${({ image }) => `url(${image})`};
+  background-size: cover;
+  background-position: center;
+  border-radius: 8px 8px 0 0;
+`;
+
+const ModalBody = styled.div`
+  padding: 2rem;
+`;
+
+const ModalTitle = styled.h2`
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: ${({ theme }) => theme.colors.primary};
+`;
+
+const ModalDescription = styled.div`
+  white-space: pre-wrap;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+`;
+
+const ModalStats = styled.div`
+  display: flex;
+  justify-content: space-between;
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid ${({ theme }) => theme.colors.gray};
+`;
+
+
+const PetitionTitle = styled.h3`
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+    color: ${({ theme }) => theme.colors.black};
+`;
+
 const PetitionDescription = styled.p`
-    color: ${({theme}) => theme.colors.grayDark};
+    color: ${({ theme }) => theme.colors.grayDark};
     font-size: 0.9rem;
-    flex: 1;
-    margin: 0.5rem 0;
+    margin-bottom: 1rem;
     display: -webkit-box;
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
+    flex: 1;
 `;
 
 const PetitionStats = styled.div`
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin-top: auto;
 `;
 
 const VotesCount = styled.div`
-    background-color: ${({theme}) => theme.colors.primaryLight};
-    color: ${({theme}) => theme.colors.primaryDark};
-    padding: 0.25rem 0.75rem;
+    background-color: ${({ theme }) => theme.colors.primaryLight};
+    color: ${({ theme }) => theme.colors.primaryDark};
+    padding: 0.15rem 0.75rem;
     border-radius: 20px;
     font-size: 0.8rem;
     font-weight: 600;
@@ -112,10 +204,9 @@ const VotesCount = styled.div`
 
 const PetitionCategory = styled.span`
     font-size: 0.8rem;
-    color: ${({theme}) => theme.colors.grayDark};
+    color: ${({ theme }) => theme.colors.grayDark};
 `;
 
-// Подбираем картинку под категорию
 const categoryImages = {
     'Социальная политика': 'https://picsum.photos/seed/social/400/300',
     'Спорт':               'https://picsum.photos/seed/sport/400/300',
@@ -162,11 +253,23 @@ const mockPetitions = [
     },
 ];
 
+
 function HomePage() {
     const [selectedPetition, setSelectedPetition] = useState(null);
 
+    // Функция для открытия модалки
+    const openModal = (petition) => {
+        setSelectedPetition(petition);
+    };
+
+    // Функция для закрытия модалки
+    const closeModal = () => {
+        setSelectedPetition(null);
+    };
+
     return (
         <HomePageLayout>
+            {/* Навигационные табы */}
             <NavTabs>
                 <Tab to="/" end>
                     <FaFire/> Главная
@@ -180,15 +283,13 @@ function HomePage() {
                 <Tab to="/parts">
                     <FaUsers/> Статистика партий
                 </Tab>
-                <Tab to="/calendar">
-                    <FaCalendarAlt/> Календарь событий
-                </Tab>
             </NavTabs>
 
+            {/* Секция с топом петиций */}
             <ContentSection
-                initial={{opacity: 0, y: 20}}
-                animate={{opacity: 1, y: 0}}
-                transition={{duration: 0.5}}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
             >
                 <SectionHeader>
                     <SectionTitle>Лента предложений</SectionTitle>
@@ -201,51 +302,47 @@ function HomePage() {
                     {mockPetitions.map((petition) => (
                         <motion.div
                             key={petition.id}
-                            initial={{opacity: 0, y: 20}}
-                            animate={{opacity: 1, y: 0}}
-                            transition={{duration: 0.3, delay: petition.id * 0.1}}
-                            onClick={() => setSelectedPetition(petition)}
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.3, delay: petition.id * 0.1 }}
+                            onClick={() => openModal(petition)}
+                            style={{ cursor: 'pointer' }}
                         >
                             <PetitionCard>
-                                <PetitionImage src={petition.image}/>
+                                <PetitionImage image={petition.image} />
                                 <PetitionContent>
-                                    <CardTitle>{petition.title}</CardTitle>
-                                    <PetitionDescription>
-                                        {petition.description}
-                                    </PetitionDescription>
+                                    <PetitionTitle>{petition.title}</PetitionTitle>
+                                    <PetitionDescription>{petition.description}</PetitionDescription>
                                     <PetitionStats>
-                                        <VotesCount>
-                                            {petition.votes.toLocaleString()} голосов
-                                        </VotesCount>
-                                        <PetitionCategory>
-                                            {petition.category}
-                                        </PetitionCategory>
+                                        <VotesCount>{petition.votes.toLocaleString()} голосов</VotesCount>
+                                        <PetitionCategory>{petition.category}</PetitionCategory>
                                     </PetitionStats>
                                 </PetitionContent>
                             </PetitionCard>
                         </motion.div>
                     ))}
                 </PetitionsGrid>
-
                 <AnimatePresence>
                     {selectedPetition && (
                         <ModalOverlay
-                            initial={{opacity: 0}}
-                            animate={{opacity: 1}}
-                            exit={{opacity: 0}}
-                            onClick={() => setSelectedPetition(null)}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            onClick={closeModal}
                         >
                             <ModalContent
-                                initial={{y: 50, opacity: 0}}
-                                animate={{y: 0, opacity: 1}}
-                                exit={{y: 50, opacity: 0}}
-                                transition={{type: 'spring', damping: 25}}
+                                initial={{ y: 50, opacity: 0 }}
+                                animate={{ y: 0, opacity: 1 }}
+                                exit={{ y: 50, opacity: 0 }}
+                                transition={{ type: 'spring', damping: 25 }}
                                 onClick={(e) => e.stopPropagation()}
                             >
-                                <CloseButton onClick={() => setSelectedPetition(null)}>
-                                    <FaTimes/>
+                                <CloseButton onClick={closeModal}>
+                                    <FaTimes />
                                 </CloseButton>
-                                <ModalImage image={selectedPetition.image}/>
+
+                                <ModalImage image={selectedPetition.image} />
+
                                 <ModalBody>
                                     <ModalTitle>{selectedPetition.title}</ModalTitle>
                                     <ModalDescription>{selectedPetition.description}</ModalDescription>
@@ -254,18 +351,18 @@ function HomePage() {
                                     <div style={{ margin: '1.5rem 0' }}>
                                         {!selectedPetition.hasVoted ? (
                                             <div style={{ marginBottom: '1rem'}}>
-                                            <PrimaryButton
-                                                onClick={() => {
-                                                    setSelectedPetition(prev => ({
-                                                        ...prev,
-                                                        votes: prev.votes + 1,
-                                                        hasVoted: true
-                                                    }));
-                                                }}
-                                                style={{ marginRight: '1rem' }}
-                                            >
-                                                <FaThumbsUp /> Поддержать
-                                            </PrimaryButton>
+                                                <PrimaryButton
+                                                    onClick={() => {
+                                                        setSelectedPetition(prev => ({
+                                                            ...prev,
+                                                            votes: prev.votes + 1,
+                                                            hasVoted: true
+                                                        }));
+                                                    }}
+                                                    style={{ marginRight: '1rem' }}
+                                                >
+                                                    <FaThumbsUp /> Поддержать
+                                                </PrimaryButton>
                                             </div>
                                         ) : (
                                             <div style={{ color: '#1a8f3a', marginBottom: '1rem' }}>
@@ -413,16 +510,10 @@ function HomePage() {
                                             </div>
                                         )}
                                     </div>
-                                    <ModalDescription>
-                                        {selectedPetition.description}
-                                    </ModalDescription>
+
                                     <ModalStats>
-                                        <VotesCount>
-                                            {selectedPetition.votes.toLocaleString()} голосов
-                                        </VotesCount>
-                                        <PetitionCategory>
-                                            {selectedPetition.category}
-                                        </PetitionCategory>
+                                        <VotesCount>{selectedPetition.votes.toLocaleString()} голосов</VotesCount>
+                                        <PetitionCategory>{selectedPetition.category}</PetitionCategory>
                                     </ModalStats>
                                 </ModalBody>
                             </ModalContent>
