@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import React, {useState} from 'react';
 import styled from 'styled-components';
 import {motion} from 'framer-motion';
 import {
@@ -297,6 +297,9 @@ const StatsParty = () => {
                 </Tab>
                 <Tab to="/parts">
                     <FaUsers/> Статистика партий
+                </Tab>
+                <Tab to="/calendar">
+                    <FaCalendarAlt /> Календарь событий
                 </Tab>
             </NavTabs>
             <StatsPageContainer>

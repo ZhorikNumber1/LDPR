@@ -1,7 +1,16 @@
-import {useState, useRef, useEffect} from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import styled from 'styled-components';
 import {motion, AnimatePresence} from 'framer-motion';
-import {FaUsers, FaChevronDown, FaSearch, FaPaperPlane, FaComments, FaFire, FaEdit} from 'react-icons/fa';
+import {
+    FaUsers,
+    FaChevronDown,
+    FaSearch,
+    FaPaperPlane,
+    FaComments,
+    FaFire,
+    FaEdit,
+    FaCalendarAlt
+} from 'react-icons/fa';
 import {Card, CardTitle} from '../common/Card';
 import {PrimaryButton, SecondaryButton} from '../common/Button';
 import {NavLink} from 'react-router-dom';
@@ -368,6 +377,9 @@ const ChatPage = () => {
                 </Tab>
                 <Tab to="/parts">
                     <FaUsers/> Статистика партий
+                </Tab>
+                <Tab to="/calendar">
+                    <FaCalendarAlt /> Календарь событий
                 </Tab>
             </NavTabs>
             <Card

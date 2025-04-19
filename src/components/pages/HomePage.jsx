@@ -1,10 +1,20 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
 import { NavLink } from 'react-router-dom';
 import { Card, CardTitle, CardContent } from '../common/Card';
 import { PrimaryButton, SecondaryButton } from '../common/Button';
-import {FaFire, FaEdit, FaComments, FaUsers, FaLightbulb, FaTimes, FaThumbsUp, FaFileAlt} from 'react-icons/fa';
+import {
+    FaFire,
+    FaEdit,
+    FaComments,
+    FaUsers,
+    FaLightbulb,
+    FaTimes,
+    FaThumbsUp,
+    FaFileAlt,
+    FaCalendarAlt
+} from 'react-icons/fa';
 import {TextAreaInput} from "../common/Input.jsx";
 
 // Стили для новой структуры
@@ -247,8 +257,8 @@ const mockPetitions = [
         title: 'Повысить финансирование здравоохранения',
         description:
             'Требуем увеличения бюджета на медицину до 10% ВВП для улучшения качества медицинского обслуживания.',
-        votes: 21087,
-        category: 'Здравоохранение',
+        votes: 2087,
+        category: 'Здоровье',
         image: categoryImages['Здравоохранение'],
     },
 ];
@@ -282,6 +292,9 @@ function HomePage() {
                 </Tab>
                 <Tab to="/parts">
                     <FaUsers/> Статистика партий
+                </Tab>
+                <Tab to="/calendar">
+                    <FaCalendarAlt /> Календарь событий
                 </Tab>
             </NavTabs>
 

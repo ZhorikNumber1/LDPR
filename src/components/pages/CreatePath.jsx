@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import {NavLink, useNavigate} from 'react-router-dom';
-import {FaFileAlt, FaUserEdit, FaHashtag, FaPaperPlane, FaFire, FaEdit, FaComments, FaUsers} from 'react-icons/fa';
+import {FaFileAlt, FaUserEdit, FaHashtag, FaPaperPlane, FaFire, FaEdit, FaComments, FaUsers, FaCalendarAlt} from 'react-icons/fa';
 import { Card, CardTitle } from '../common/Card';
 import { PrimaryButton, SecondaryButton } from '../common/Button';
 import { Input, TextAreaInput, SelectInput } from '../common/Input';
@@ -244,6 +244,9 @@ class CreatePetition extends React.Component {
                         </Tab>
                         <Tab to="/parts">
                             <FaUsers/> Статистика партий
+                        </Tab>
+                        <Tab to="/calendar">
+                            <FaCalendarAlt /> Календарь событий
                         </Tab>
                     </NavTabs>
                 </>
