@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { NavLink } from 'react-router-dom';
 import { Card, CardTitle, CardContent } from '../common/Card';
 import { PrimaryButton } from '../common/Button';
-import { FaFire, FaEdit, FaComments } from 'react-icons/fa';
+import {FaFire, FaEdit, FaComments, FaUsers} from 'react-icons/fa';
 
 // Стили для новой структуры
 const HomePageLayout = styled.div`
@@ -119,7 +119,7 @@ const PetitionStats = styled.div`
 const VotesCount = styled.div`
     background-color: ${({ theme }) => theme.colors.primaryLight};
     color: ${({ theme }) => theme.colors.primaryDark};
-    padding: 0.25rem 0.75rem;
+    padding: 0.15rem 0.75rem;
     border-radius: 20px;
     font-size: 0.8rem;
     font-weight: 600;
@@ -145,7 +145,7 @@ const mockPetitions = [
         title: 'Вернуть прямые выборы мэров городов',
         description: 'Требуем восстановления демократического института прямых выборов глав муниципальных образований.',
         votes: 8765,
-        category: 'Политические реформы',
+        category: 'Спорт',
         image: 'https://source.unsplash.com/random/400x300/?election'
     },
     {
@@ -172,13 +172,16 @@ function HomePage() {
             {/* Навигационные табы */}
             <NavTabs>
                 <Tab to="/" end>
-                    <FaFire /> Главная
+                    <FaFire/> Главная
                 </Tab>
-                <Tab to="/create-petition">
-                    <FaEdit /> Создать петицию
+                <Tab to="/create_peth">
+                    <FaEdit/> Создать петицию
                 </Tab>
                 <Tab to="/chat">
-                    <FaComments /> Чат с Жириновским
+                    <FaComments/> Чат с партиями
+                </Tab>
+                <Tab to="/parts">
+                    <FaUsers/> Статистика партий
                 </Tab>
             </NavTabs>
 

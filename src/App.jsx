@@ -4,6 +4,7 @@ import HomePage from './components/pages/HomePage';
 import AccountPage from './components/pages/AccountPage';
 import AdminComponent from "./components/admin/AdminComponent.jsx";
 import ChatPage from './components/pages/ChatPage.jsx';
+import CreatePath from './components/pages/CreatePath.jsx';
 
 function App() {
     return (
@@ -13,6 +14,7 @@ function App() {
             <Route path="account" element={<AccountPage/>}/>
             <Route path="/chat" element={<ChatPage />} />
             <Route path="/admin" element={<AdminComponent/>}/>
+            <Route path="/create_peth" element={<CreatePath />} />
         </Routes>
     );
 }
