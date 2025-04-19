@@ -248,7 +248,6 @@ function HomePage() {
                                 <ModalImage image={selectedPetition.image}/>
                                 <ModalBody>
                                     <ModalTitle>{selectedPetition.title}</ModalTitle>
-<<<<<<< HEAD
                                     <ModalDescription>{selectedPetition.description}</ModalDescription>
 
                                     {/* Добавленные элементы */}
@@ -414,12 +413,9 @@ function HomePage() {
                                             </div>
                                         )}
                                     </div>
-
-=======
                                     <ModalDescription>
                                         {selectedPetition.description}
                                     </ModalDescription>
->>>>>>> d7e299e (PoliticalCalendar and HomePage)
                                     <ModalStats>
                                         <VotesCount>
                                             {selectedPetition.votes.toLocaleString()} голосов
