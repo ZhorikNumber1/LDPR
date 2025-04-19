@@ -1,120 +1,149 @@
 import React, { useState, useEffect } from 'react';
-import './AdminComponent.css';
+import MainLayout from '../layout/MainLayout';
+import { Card, CardTitle } from '../common/Card';
+import { PrimaryButton } from '../common/Button';
+import styled from 'styled-components';
+import { motion } from 'framer-motion';
 
-function NavBar() {
-    return (
-        <nav className="admin-nav">
-            <ul>
-                <li><a href="#dashboard">Панель</a></li>
-                <li><a href="#requests">Обращения</a></li>
-                <li><a href="#settings">Настройки</a></li>
-            </ul>
-        </nav>
-    );
-}
+const PetitionsGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+`;
 
-function RequestItem({ request, onSupport, onTake }) {
-    return (
-        <div className="request-item fade-in">
-            <h4>{request.title}</h4>
-            <p>{request.description}</p>
-            <div className="request-stats">
-                <span>Поддержали: {request.supportCount}</span>
-                {request.deputies.length > 0 && (
-                    <span>В работе: {request.deputies.join(', ')}</span>
-                )}
-            </div>
-            <div className="request-actions">
-                <button
-                    className="btn support"
-                    onClick={() => onSupport(request.id)}
-                >
-                    👍 Поддержать
-                </button>
-                <button
-                    className="btn take"
-                    onClick={() => onTake(request.id)}
-                >
-                    🚩 Взять в работу
-                </button>
-            </div>
-        </div>
-    );
-}
+const PetitionCard = styled(Card)`
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+`;
+
+const PetitionImage = styled.div`
+  height: 160px;
+  background-color: ${({ theme }) => theme.colors.grayLight};
+  background-image: ${({ image }) => `url(${image})`};
+  background-size: cover;
+  background-position: center;
+  border-radius: 8px 8px 0 0;
+`;
+
+const PetitionContent = styled.div`
+  padding: 1rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+`;
+
+const PetitionDescription = styled.p`
+  color: ${({ theme }) => theme.colors.grayDark};
+  font-size: 0.9rem;
+  flex: 1;
+  margin-bottom: 1rem;
+`;
+
+const PetitionStats = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.85rem;
+  color: ${({ theme }) => theme.colors.grayDark};
+`;
+
+const VotesCount = styled.span`
+  background-color: ${({ theme }) => theme.colors.primaryLight};
+  color: ${({ theme }) => theme.colors.primaryDark};
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-weight: 600;
+`;
+
+const DeputiesList = styled.span`
+  font-size: 0.85rem;
+  color: ${({ theme }) => theme.colors.secondaryDark};
+`;
 
 function AdminComponent() {
-    // mock top-рекомендации
-    const [topRequests, setTopRequests] = useState([]);
+    const [petitions, setPetitions] = useState([]);
 
     useEffect(() => {
-        const mock = [
+        setPetitions([
             {
                 id: 1,
                 title: 'Бесплатный интернет в парках',
                 description: 'Просьба обеспечить Wi-Fi в городских парках.',
-                supportCount: 24,
+                votes: 2430,
                 deputies: [],
+                image: 'https://source.unsplash.com/random/400x300/?wifi',
             },
             {
                 id: 2,
-                title: 'Ремонт дорог',
-                description: 'Необходимо отремонтировать дорогу на улице Ленина.',
-                supportCount: 15,
+                title: 'Ремонт дорог на Ленинской',
+                description: 'Необходимо срочно отремонтировать дорогу на улице Ленинской.',
+                votes: 1580,
                 deputies: ['Иванова (СП)'],
+                image: 'https://source.unsplash.com/random/400x300/?road',
             },
             {
                 id: 3,
-                title: 'Открытие новой школы',
-                description: 'Строительство школы на северо-западе города.',
-                supportCount: 30,
+                title: 'Новая школа в микрорайоне Здоровье',
+                description: 'Строительство школы до конца 2025 года.',
+                votes: 3125,
                 deputies: ['Петров (ЕДР)', 'Сидоров (ЯБЛОКО)'],
+                image: 'https://source.unsplash.com/random/400x300/?school',
             },
-        ];
-        setTopRequests(mock);
+        ]);
     }, []);
 
-    const handleSupport = (id) => {
-        setTopRequests(prev =>
-            prev.map(r =>
-                r.id === id ? { ...r, supportCount: r.supportCount + 1 } : r
-            )
-        );
-    };
-
     const handleTake = (id) => {
-        const currentDeputy = 'ТекущийДепутат (СП)'; // заменить реальным именем
-        setTopRequests(prev =>
-            prev.map(r =>
-                r.id === id && !r.deputies.includes(currentDeputy)
-                    ? { ...r, deputies: [...r.deputies, currentDeputy] }
-                    : r
+        const currentDeputy = 'ТекущийДепутат (СП)';
+        setPetitions(prev =>
+            prev.map(p =>
+                p.id === id && !p.deputies.includes(currentDeputy)
+                    ? { ...p, deputies: [...p.deputies, currentDeputy] }
+                    : p
             )
         );
     };
 
     return (
-        <div className="admin-container">
-            <NavBar />
-            <main className="admin-main">
-                <header className="admin-header fade-in">
-                    <h2 className="admin-title">Топ обращений</h2>
-                    <p className="admin-description">
-                        Здесь отображаются предложения, которые можно поддержать и взять в работу.
-                    </p>
-                </header>
+        <MainLayout>
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+            >
+                <h2>Топ обращений для депутатов</h2>
+                <p>Выберите обращение и возьмите его в работу.</p>
+            </motion.div>
 
-                <section id="top-requests" className="requests-section">
-                    {topRequests.map(req => (
-                        <RequestItem
-                            key={req.id}
-                            request={req}
-                            onSupport={handleSupport}
-                            onTake={handleTake}
-                        />
-                    ))}
-                </section>
-            </main>
-        </div>
+            <PetitionsGrid>
+                {petitions.map(p => (
+                    <motion.div
+                        key={p.id}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.3, delay: p.id * 0.1 }}
+                    >
+                        <PetitionCard>
+                            <PetitionImage image={p.image} />
+                            <PetitionContent>
+                                <CardTitle>{p.title}</CardTitle>
+                                <PetitionDescription>{p.description}</PetitionDescription>
+                                <PetitionStats>
+                                    <VotesCount>{p.votes.toLocaleString()} голосов</VotesCount>
+                                    {p.deputies.length > 0 ? (
+                                        <DeputiesList>В работе: {p.deputies.join(', ')}</DeputiesList>
+                                    ) : (
+                                        <PrimaryButton onClick={() => handleTake(p.id)}>
+                                            Взять в работу
+                                        </PrimaryButton>
+                                    )}
+                                </PetitionStats>
+                            </PetitionContent>
+                        </PetitionCard>
+                    </motion.div>
+                ))}
+            </PetitionsGrid>
+        </MainLayout>
     );
 }
 
