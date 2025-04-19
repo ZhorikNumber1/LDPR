@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import {NavLink} from 'react-router-dom';
 import {Card, CardTitle, CardContent} from '../common/Card';
 import {PrimaryButton, SecondaryButton} from '../common/Button';
-import {FaFire, FaEdit, FaComments, FaUsers, FaLightbulb, FaTimes, FaThumbsUp, FaFileAlt} from 'react-icons/fa';
+import {FaFire, FaEdit, FaComments, FaUsers, FaLightbulb, FaTimes, FaThumbsUp, FaFileAlt, FaCalendarAlt} from 'react-icons/fa';
 import {TextAreaInput} from "../common/Input.jsx";
 
 // Стили для новой структуры
