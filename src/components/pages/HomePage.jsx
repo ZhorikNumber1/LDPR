@@ -192,7 +192,7 @@ function HomePage() {
                 transition={{ duration: 0.5 }}
             >
                 <SectionHeader>
-                    <SectionTitle>Топ петиций</SectionTitle>
+                    <SectionTitle>Лента предложений</SectionTitle>
                     <PrimaryButton as={NavLink} to="/petitions">
                         Все петиции
                     </PrimaryButton>
